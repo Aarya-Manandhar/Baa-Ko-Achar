@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - Baa Ko Achar</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="auth-styles.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar modern-navbar navbar-light">
+    <div class="logo logo-modern">
+      <img src="PHOTOS/baa ko achar logo.png" alt="Baa Ko Achar Logo" class="logo-img-modern">
+      <div class="logo-text-group">
+        <span class="logo-title">Baa Ko Achar</span>
+        <span class="logo-sub">Authentic Nepali Pickles</span>
+      </div>
+    </div>
+    <ul class="nav-links nav-links-modern">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+  </nav>
+
+  <!-- Access Denied -->
+  <div class="access-denied" id="accessDenied">
+    <i class="fas fa-ban" style="font-size:3rem;"></i><br><br>
+    Access Denied. You must be an admin to view this page.<br><br>
+    <a href="index.html">Return to Home</a>
+  </div>
+
+  <!-- Admin Panel -->
+  <div class="admin-container" id="adminPanel" style="display:none;">
+    <div class="admin-title"><i class="fas fa-user-shield"></i> Admin Dashboard</div>
+    
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="users">Users</button>
+      <button class="admin-tab" data-tab="products">Products</button>
+      <button class="admin-tab" data-tab="orders">Orders</button>
+      <button class="admin-tab" data-tab="payments">Payments</button>
+    </div>
+    
+    <!-- Users -->
+    <div class="admin-section active" id="usersSection">
+      <h3>Users Management</h3>
+      <table class="admin-table" id="usersTable">
+        <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Created</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    
+    <!-- Products -->
+    <div class="admin-section" id="productsSection">
+      <h3>Products Management</h3>
+      <form id="addProductForm">
+        <input type="text" name="name" placeholder="Product Name" required />
+        <input type="number" name="price" placeholder="Price" required />
+        <input type="number" name="stock" placeholder="Stock" required />
+        <input type="text" name="category" placeholder="Category" required />
+        <button type="submit">Add Product</button>
+      </form>
+      <table class="admin-table" id="productsTable">
+        <thead><tr><th>ID</th><th>Name</th><th>Price</th><th>Stock</th><th>Category</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    
+    <!-- Orders -->
+    <div class="admin-section" id="ordersSection">
+      <h3>Orders Management</h3>
+      <table class="admin-table" id="ordersTable">
+        <thead><tr><th>Order ID</th><th>User</th><th>Total</th><th>Status</th><th>Date</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Payments -->
+    <div class="admin-section" id="paymentsSection">
+      <h3>Payments</h3>
+      <table class="admin-table" id="paymentsTable">
+        <thead><tr><th>ID</th><th>Order</th><th>User</th><th>Amount</th><th>Method</th><th>Status</th><th>Paid At</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

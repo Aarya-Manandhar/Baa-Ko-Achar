@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders - Baa Ko Achar</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body { background: #e5eaee; min-height: 100vh; font-family: 'Poppins', sans-serif; }
+    .orders-container { max-width: 900px; margin: 60px auto; padding: 0 16px; }
+    .orders-title { font-size: 2.2rem; font-weight: 800; color: #f2760a; margin-bottom: 32px; }
+    .order-card { background: #fff; border-radius: 18px; box-shadow: 0 8px 32px rgba(242, 118, 10, 0.10); margin-bottom: 32px; padding: 0 0 18px 0; transition: box-shadow 0.2s; }
+    .order-header { display: flex; justify-content: space-between; align-items: center; padding: 24px 32px 0 32px; }
+    .order-info { display: flex; flex-direction: column; gap: 6px; }
+    .order-id { color: #888; font-size: 1rem; }
+    .order-date { color: #333; font-size: 1.05rem; }
+    .order-total { color: #f2760a; font-size: 1.15rem; font-weight: 700; }
+    .order-status { font-size: 1rem; font-weight: 600; color: #4caf50; }
+    .order-toggle-btn { background: none; border: none; color: #f2760a; font-size: 1.3rem; cursor: pointer; transition: color 0.2s; }
+    .order-toggle-btn:hover { color: #bc4508; }
+    .order-details { display: none; padding: 0 32px 18px 32px; }
+    .order-details.active { display: block; }
+    .order-items-table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+    .order-items-table th, .order-items-table td { padding: 10px 8px; text-align: left; }
+    .order-items-table th { color: #f2760a; font-size: 1rem; font-weight: 700; border-bottom: 2px solid #f3f3f3; }
+    .order-items-table td { color: #333; font-size: 1rem; border-bottom: 1px solid #f3f3f3; }
+    .order-items-table tr:last-child td { border-bottom: none; }
+    .no-orders { text-align: center; color: #888; font-size: 1.2rem; margin-top: 60px; }
+    @media (max-width: 600px) { .order-header, .order-details { padding: 12px 6px 0 6px; } }
+    .back-to-shop-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--brand-500, #f2760a), var(--brand-600, #e35d05));
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      margin-top: 10px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(242, 118, 10, 0.10);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .back-to-shop-btn:hover {
+      background: linear-gradient(135deg, var(--brand-600, #e35d05), var(--brand-700, #bc4508));
+      box-shadow: 0 6px 18px rgba(242, 118, 10, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar modern-navbar navbar-light">
+    <div class="logo logo-modern">
+      <a href="index.html" class="logo">
+        <img src="PHOTOS/baa ko achar logo.png" alt="Baa Ko Achar Logo" class="logo-img">
+        <span class="logo-text">
+          <span class="logo-title">Baa Ko Achar</span>
+          <span class="logo-subtitle">Authentic Nepali Pickles</span>
+        </span>
+      </a>
+    </div>
+    <ul class="nav-links nav-links-modern" id="navbarLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <div class="nav-actions" id="navbarActions"></div>
+  </nav>
+  <div class="orders-container">
+    <button onclick="window.location.href='/baa/baa/baa/shop.html'" class="back-to-shop-btn"><i class="fas fa-arrow-left"></i> Back to Shop</button>
+    <div class="orders-title">My Orders</div>
+    <div id="ordersList">
+      <!-- Orders will be loaded here -->
+    </div>
+    <div class="no-orders" id="noOrdersMsg" style="display:none;">You have not placed any orders yet.</div>
+  </div>
+  <script src="script.js"></script>
+  <script>
+    async function loadOrders() {
+      const res = await fetch('get-orders.php');
+      const data = await res.json();
+      const ordersList = document.getElementById('ordersList');
+      const noOrdersMsg = document.getElementById('noOrdersMsg');
+      ordersList.innerHTML = '';
+      if (!data.success || !data.orders || data.orders.length === 0) {
+        noOrdersMsg.style.display = '';
+        return;
+      }
+      noOrdersMsg.style.display = 'none';
+      data.orders.forEach((order, idx) => {
+        const orderId = order.id;
+        const orderDate = new Date(order.created_at);
+        const orderTotal = order.total;
+        const orderStatus = order.status || 'Processing';
+        const items = Array.isArray(order.items) ? order.items : JSON.parse(order.items);
+        const card = document.createElement('div');
+        card.className = 'order-card';
+        card.innerHTML = `
+          <div class="order-header">
+            <div class="order-info">
+              <div class="order-id">Order #${orderId}</div>
+              <div class="order-date">${orderDate}</div>
+              <div class="order-total">Total: Rs. ${orderTotal}</div>
+              <div class="order-address"><b>Address:</b> ${order.location || 'N/A'}</div>
+              <div class="order-phone"><b>Phone:</b> ${order.phone || 'N/A'}</div>
+            </div>
+            <button class="order-toggle-btn" onclick="toggleOrderDetails(${orderId})" id="toggleBtn${orderId}"><i class="fas fa-chevron-down"></i></button>
+          </div>
+          <div class="order-details" id="orderDetails${orderId}">
+            <table class="order-items-table">
+              <thead>
+                <tr><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th></tr>
+              </thead>
+              <tbody>
+                ${items.map(item => `
+                  <tr>
+                    <td>${item.product_name || item.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>Rs. ${item.product_price || item.price}</td>
+                    <td>Rs. ${(item.product_price * item.quantity || item.price * item.quantity).toFixed(2)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+        ordersList.appendChild(card);
+      });
+    }
+    window.toggleOrderDetails = function(orderId) {
+      const details = document.getElementById('orderDetails' + orderId);
+      const btn = document.getElementById('toggleBtn' + orderId);
+      if (details.classList.contains('active')) {
+        details.classList.remove('active');
+        btn.innerHTML = '<i class="fas fa-chevron-down"></i>';
+      } else {
+        details.classList.add('active');
+        btn.innerHTML = '<i class="fas fa-chevron-up"></i>';
+      }
+    }
+    document.addEventListener('DOMContentLoaded', loadOrders);
+    renderNavbarUserState && renderNavbarUserState();
+  </script>
+</body>
+</html> 

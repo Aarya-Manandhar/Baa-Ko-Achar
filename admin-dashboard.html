@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - Baa Ko Achar</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f7f7f7; font-family: 'Poppins', sans-serif; margin: 0; }
+    .admin-nav { background: #fff; padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.04);}
+    .logo { display: flex; align-items: center; text-decoration: none; gap: 12px; }
+    .logo-img { height: 50px; width: auto; }
+    .logo-title { display: block; color: #f2760a; font-weight: 800; font-size: 1.4rem; }
+    .logo-subtitle { display: block; color: #666; font-size: 0.8rem; }
+    .admin-logout { color: #f44336; text-decoration: none; font-weight: 600; }
+
+    .admin-container { padding: 0 32px; }
+    .admin-tabs { display: flex; gap: 10px; margin: 32px 0 0 0; }
+    .admin-tab { 
+        background: #eee; border: none; border-radius: 8px 8px 0 0; 
+        padding: 12px 28px; font-size: 1rem; font-weight: 600; 
+        color: #666; cursor: pointer; transition: 0.3s;
+    }
+    .admin-tab.active { background: #f2760a; color: #fff; }
+
+    .admin-section { 
+        display: none; background: #fff; border-radius: 0 12px 12px 12px; 
+        box-shadow: 0 4px 24px rgba(0,0,0,0.06); padding: 32px; 
+    }
+    .admin-section.active { display: block; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { padding: 14px 10px; border-bottom: 1px solid #eee; text-align: left; }
+    th { color: #f2760a; font-weight: 700; background: #fffaf5; }
+    
+    .spice-tag {
+        padding: 4px 10px; border-radius: 20px; font-size: 0.8rem;
+        background: #fff3e0; color: #f2760a; border: 1px solid #f2760a;
+        text-transform: capitalize;
+    }
+
+    .btn-add { background: #f2760a; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .btn-delete { color: #f44336; border: none; background: none; cursor: pointer; font-weight: 600; }
+
+    /* Modal styles */
+    .modal-bg { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
+    .modal-bg.active { display:flex; }
+    .modal-box { background:#fff; border-radius:14px; padding:32px 28px; min-width:420px; max-width:90vw; position:relative; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
+    .modal-close { position:absolute; top:18px; right:20px; font-size:1.8rem; color:#f2760a; background:none; border:none; cursor:pointer; }
+    .modal-title { color:#f2760a; font-size:1.5rem; font-weight:700; margin-bottom:18px; border-bottom: 2px solid #f2760a; padding-bottom: 8px;}
+    
+    form div { margin-bottom: 15px; }
+    form label { font-weight: 600; color: #444; display: block; margin-bottom: 5px; }
+    form input, form select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
+    
+    .modal-table { width:100%; border-collapse:collapse; margin:18px 0; }
+    .modal-table th { background: #f9f9f9; }
+  </style>
+</head>
+<body>
+
+  <div class="admin-nav">
+    <a href="index.html" class="logo">
+      <img src="PHOTOS/baa ko achar logo.png" alt="Baa Ko Achar Logo" class="logo-img">
+      <span class="logo-text">
+        <span class="logo-title">Baa Ko Achar</span>
+        <span class="logo-subtitle">Authentic Nepali Pickles</span>
+      </span>
+    </a>
+    <a href="admin-auth.php?logout=1" class="admin-logout">Logout</a>
+  </div>
+
+  <div class="admin-container">
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="users">Users</button>
+      <button class="admin-tab" data-tab="products">Products</button>
+      <button class="admin-tab" data-tab="orders">Orders</button>
+    </div>
+
+    <div class="admin-section active" id="usersSection">
+      <h3>User Management</h3>
+      <table id="usersTable">
+        <thead>
+          <tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Created</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="admin-section" id="productsSection">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h3>Inventory Management</h3>
+        <button class="btn-add" onclick="showAddProductModal()">+ Add New Product</button>
+      </div>
+      <table id="productsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Image</th>
+            <th>Product Name</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Spice</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="admin-section" id="ordersSection">
+      <h3>Customer Orders</h3>
+      <table id="ordersTable">
+        <thead>
+          <tr><th>ID</th><th>User</th><th>Total</th><th>Date</th><th>Details</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="orderModalBg">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeOrderModal()">&times;</button>
+      <div id="orderModalContent"></div>
+    </div>
+  </div>
+
+  <div class="modal-bg" id="productModalBg">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeProductModal()">&times;</button>
+      <div class="modal-title">Add New Product</div>
+      <form id="addProductForm" enctype="multipart/form-data">
+        <div>
+          <label>Product Name</label>
+          <input type="text" name="name" placeholder="e.g. Spicy Mango Pickle" required>
+        </div>
+        <div>
+          <label>Product Image</label>
+          <input type="file" name="image" accept="image/*" required>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <div style="flex:1;">
+            <label>Price (Rs.)</label>
+            <input type="number" name="price" placeholder="350" required>
+          </div>
+          <div style="flex:1;">
+            <label>Stock Quantity</label>
+            <input type="number" name="stock" placeholder="50" required>
+          </div>
+        </div>
+        <div>
+          <label>Category</label>
+          <input type="text" name="category" placeholder="mango/chicken/lemon" required>
+        </div>
+        <div>
+          <label>Spice Level</label>
+          <select name="spice_level">
+            <option value="mild">Mild</option>
+            <option value="medium" selected>Medium</option>
+            <option value="hot">Hot</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-add" style="width:100%; padding:15px; margin-top: 10px; font-size: 1.1rem;">Save Product</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="admin.js?v=2.1"></script>
+
+</body>
+</html>

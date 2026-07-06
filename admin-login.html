@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Login - Baa Ko Achar</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: #f7f7f7; display: flex; align-items: center; justify-content: center; height: 100vh; }
+    .admin-login-box { background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 36px 32px; width: 340px; }
+    .admin-login-box h2 { color: #f2760a; margin-bottom: 24px; text-align: center; }
+    .admin-login-box input { width: 100%; padding: 12px; margin-bottom: 18px; border-radius: 8px; border: 1.5px solid #e5e7eb; }
+    .admin-login-box button { width: 100%; padding: 12px; background: linear-gradient(135deg, #f2760a, #e35d05); color: #fff; border: none; border-radius: 8px; font-weight: 600; font-size: 1.1rem; cursor: pointer; }
+    .admin-login-box .error { color: #f44336; margin-bottom: 12px; text-align: center; }
+  </style>
+</head>
+<body>
+  <form class="admin-login-box" method="POST" action="admin-auth.php">
+    <h2>Admin Login</h2>
+    <div class="error">
+      <?php if (isset($_GET['error'])) echo htmlspecialchars($_GET['error']); ?>
+    </div>
+    <input type="text" name="username" placeholder="Username" required autocomplete="off">
+    <input type="password" name="password" placeholder="Password" required autocomplete="off">
+    <button type="submit">Login</button>
+  </form>
+</body>
+</html> 

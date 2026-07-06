@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login System - Baa Ko Achar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 400px;
+        }
+        .test-form input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .test-form button {
+            padding: 12px;
+            background: #ff6b35;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .test-form button:hover {
+            background: #ff5722;
+        }
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .user-info {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Login System Test Page</h1>
+    
+    <!-- Current User Status -->
+    <div class="test-container">
+        <h2>Current Status</h2>
+        <div id="userStatus" class="status">Checking...</div>
+        <div id="userInfo" style="display: none;"></div>
+        <button id="logoutBtn" style="display: none;" onclick="testLogout()">Logout</button>
+    </div>
+
+    <!-- Test Signup -->
+    <div class="test-container">
+        <h2>🔐 Test Signup</h2>
+        <form class="test-form" id="testSignupForm">
+            <input type="text" name="first_name" placeholder="First Name" value="Test" required>
+            <input type="text" name="last_name" placeholder="Last Name" value="User" required>
+            <input type="email" name="email" placeholder="Email" value="test@example.com" required>
+            <input type="password" name="password" placeholder="Password" value="password123" required>
+            <button type="submit">Test Signup</button>
+        </form>
+        <div id="signupMessage"></div>
+    </div>
+
+    <!-- Test Login -->
+    <div class="test-container">
+        <h2>🔑 Test Login</h2>
+        <form class="test-form" id="testLoginForm">
+            <input type="email" name="email" placeholder="Email" value="test@example.com" required>
+            <input type="password" name="password" placeholder="Password" value="password123" required>
+            <button type="submit">Test Login</button>
+        </form>
+        <div id="loginMessage"></div>
+    </div>
+
+    <!-- Database Connection Test -->
+    <div class="test-container">
+        <h2>🗄️ Database Connection Test</h2>
+        <button onclick="testDatabase()">Test Database Connection</button>
+        <div id="dbMessage"></div>
+    </div>
+
+    <!-- Back to Main Site -->
+    <div class="test-container">
+        <h2>🏠 Navigation</h2>
+        <a href="index.html" style="display: inline-block; padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">Back to Main Site</a>
+    </div>
+
+    <script>
+        // Check current user status on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkUserStatus();
+            
+            // Setup form handlers
+            document.getElementById('testSignupForm').addEventListener('submit', testSignup);
+            document.getElementById('testLoginForm').addEventListener('submit', testLogin);
+        });
+
+        async function checkUserStatus() {
+            try {
+                const response = await fetch('check-session.php');
+                const data = await response.json();
+                
+                const statusDiv = document.getElementById('userStatus');
+                const userInfoDiv = document.getElementById('userInfo');
+                const logoutBtn = document.getElementById('logoutBtn');
+                
+                if (data.success && data.user) {
+                    statusDiv.innerHTML = '✅ User is logged in';
+                    statusDiv.className = 'status success';
+                    userInfoDiv.innerHTML = `
+                        <div class="user-info">
+                            <strong>User Details:</strong><br>
+                            ID: ${data.user.id}<br>
+                            Name: ${data.user.name}<br>
+                            Email: ${data.user.email}<br>
+                            Role: ${data.user.role}
+                        </div>
+                    `;
+                    userInfoDiv.style.display = 'block';
+                    logoutBtn.style.display = 'inline-block';
+                } else {
+                    statusDiv.innerHTML = '❌ No user logged in';
+                    statusDiv.className = 'status error';
+                    userInfoDiv.style.display = 'none';
+                    logoutBtn.style.display = 'none';
+                }
+            } catch (error) {
+                document.getElementById('userStatus').innerHTML = '⚠️ Error checking status: ' + error.message;
+            }
+        }
+
+        async function testSignup(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const messageDiv = document.getElementById('signupMessage');
+            
+            try {
+                const response = await fetch('signup.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.innerHTML = `<div class="message success">✅ Signup successful! User: ${data.user.name}</div>`;
+                    checkUserStatus(); // Refresh status
+                } else {
+                    messageDiv.innerHTML = `<div class="message error">❌ Signup failed: ${data.message}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="message error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function testLogin(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const messageDiv = document.getElementById('loginMessage');
+            
+            try {
+                const response = await fetch('login.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.innerHTML = `<div class="message success">✅ Login successful! Welcome ${data.user.name}</div>`;
+                    checkUserStatus(); // Refresh status
+                } else {
+                    messageDiv.innerHTML = `<div class="message error">❌ Login failed: ${data.message}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="message error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+
+        async function testLogout() {
+            try {
+                const response = await fetch('logout.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Logout successful!');
+                    checkUserStatus(); // Refresh status
+                } else {
+                    alert('❌ Logout failed');
+                }
+            } catch (error) {
+                alert('❌ Network error: ' + error.message);
+            }
+        }
+
+        async function testDatabase() {
+            const messageDiv = document.getElementById('dbMessage');
+            
+            try {
+                const response = await fetch('test-db.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    messageDiv.innerHTML = `<div class="message success">✅ Database connection successful!<br>Message: ${data.message}</div>`;
+                } else {
+                    messageDiv.innerHTML = `<div class="message error">❌ Database connection failed: ${data.message}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="message error">❌ Network error: ${error.message}</div>`;
+            }
+        }
+    </script>
+</body>
+</html>

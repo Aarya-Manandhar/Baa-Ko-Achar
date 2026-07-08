@@ -17,6 +17,14 @@
 - Responsive, modern UI with custom branding
 - Error handling and user feedback throughout
 
+Landing Page
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/0f04c94c-89f1-4d6b-bcb1-ed48701d0349" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/11a1b2b3-a1fa-4851-959d-f3884ff37dbe" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/3ae95a28-7eb8-4065-a1ab-a34fe0e0440f" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/bdaa405a-1347-45d8-aaec-6931d2ed36c2" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/e29c1843-4bbf-410a-bfe0-b4a6102902ac" />
+
+
 ---
 
 ## Project Structure
@@ -158,6 +166,9 @@ baa/
 - **Admin credentials:** Change in `admin-auth.php`.
 
 ---
+   <img width="1919" height="649" alt="image" src="https://github.com/user-attachments/assets/43618b9d-a9eb-4430-a0f3-87e7cb8cd219" />
+   <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/88be4bd1-73ee-4077-87b0-a133e44a7ef6" />
+
 
 ## Troubleshooting
 

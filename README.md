@@ -145,8 +145,6 @@ baa/
 
 - Go to: [http://localhost/baa/admin-login.html](http://localhost/baa/admin-login.html)
 - **Default credentials:**
-  - Username: `admin`
-  - Password: `admin123`
 - Credentials are hardcoded in `admin-auth.php` (change as needed).
 
 ### Features
